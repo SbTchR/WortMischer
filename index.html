@@ -1,16 +1,31 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>WortMischer</title>
+    <title>Sentence Sprint</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>WortMischer</h1>
-    <p>Ordnen Sie die Wörter der folgenden deutschen Phrase richtig an.</p>
-    <ul id="wordList"></ul>
-    <button id="checkBtn">Überprüfen</button>
-    <p id="result"></p>
+    <div id="scrambled" class="big"></div>
+    <div id="timer" class="big"></div>
+    <button id="revealBtn" aria-label="Révéler">Révéler</button>
+    <button id="nextBtn" aria-label="Manche suivante" hidden>Manche suivante</button>
+
+    <aside id="scores">
+        <ul id="scoreList"></ul>
+    </aside>
+
+    <button id="settingsBtn" aria-label="Paramètres">Paramètres</button>
+    <dialog id="settings">
+        <label for="phrasesInput">Phrases :</label><br>
+        <textarea id="phrasesInput" rows="5" cols="30"></textarea><br>
+        <label for="namesInput">Prénoms :</label><br>
+        <input id="namesInput" type="text"><br>
+        <label for="durationInput">Durée (s) :</label><br>
+        <input id="durationInput" type="number" min="1"><br>
+        <button id="saveSettings">Enregistrer</button>
+    </dialog>
+
     <script src="script.js"></script>
 </body>
 </html>
