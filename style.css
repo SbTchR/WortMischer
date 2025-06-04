@@ -10,6 +10,12 @@ body {
     color: #fff;
 }
 
+#game {
+    margin-right: 18rem;
+    text-align: center;
+    width: min(80vw, 700px);
+}
+
 .big {
     font-size: 6vw;
     text-align: center;
@@ -19,14 +25,17 @@ body {
 
 #scores {
     position: fixed;
-    right: 0;
-    top: 0;
-    max-width: 25%;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16rem;
     padding: 1rem;
     font-size: 1.5rem;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 10px;
-    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 #scores ul {
@@ -68,29 +77,30 @@ button {
     padding: 0.6rem 1.2rem;
     margin: 0.5rem;
     color: #fff;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
+    background: linear-gradient(145deg, rgba(255,255,255,0.25), rgba(255,255,255,0.1));
+    border: 1px solid rgba(255,255,255,0.3);
     border-radius: 8px;
-    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(6px);
     transition: transform 0.1s, box-shadow 0.1s, background 0.3s;
 }
 
 button:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: linear-gradient(145deg, rgba(255,255,255,0.35), rgba(255,255,255,0.2));
 }
 
 button:active {
     transform: translateY(2px);
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 dialog {
     padding: 1rem;
     font-size: 1.2rem;
-    background: rgba(0,0,0,0.6);
+    background: rgba(255,255,255,0.2);
     color: #fff;
-    border: none;
+    border: 1px solid rgba(255,255,255,0.3);
     border-radius: 10px;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
