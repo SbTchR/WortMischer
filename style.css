@@ -10,7 +10,7 @@ body {
     background: linear-gradient(135deg, #d8f3dc, #b7e4c7, #95d5b2);
     background-size: 400% 400%;
     animation: bgMove 15s ease infinite;
-    color: #063;
+    color: rgb(9, 129, 45);
 }
 
 @keyframes bgMove {
@@ -31,7 +31,7 @@ body {
     top: 0;
     bottom: 0;
     right: 0;
-    width: 180px;
+    width: 160px;
     padding: 0.5rem;
     font-size: 0.8rem;
     background: rgba(255, 255, 255, 0.3);
@@ -39,7 +39,7 @@ body {
     border-bottom-left-radius: 10px;
     backdrop-filter: blur(6px);
     overflow-y: auto;
-    color: #042;
+    color: rgb(0, 132, 37);
 }
 
 #scores ul {
@@ -80,7 +80,7 @@ body {
     margin: 0.2rem;
     padding: 0.3rem 0.5rem;
     background: rgba(255, 255, 255, 0.6);
-    color: #042;
+    color: rgb(1, 87, 15);
     border-radius: 6px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
