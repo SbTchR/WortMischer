@@ -23,7 +23,6 @@ body {
     font-size: 6vw;
     text-align: center;
     margin: 1rem 0;
-    padding-top: 35px;
     text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
@@ -148,7 +147,7 @@ dialog {
 }
 
 #translation {
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0;
     right: 0;
@@ -157,4 +156,6 @@ dialog {
     padding: 0.2rem 0;
     color: #042;
     pointer-events: none;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.6);
 }
