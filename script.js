@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const scrambledEl = document.getElementById('scrambled');
     const timerEl = document.getElementById('timer');
+    const timerText = document.getElementById('timerText');
     const revealBtn = document.getElementById('revealBtn');
     const nextBtn = document.getElementById('nextBtn');
     const settingsBtn = document.getElementById('settingsBtn');
@@ -64,13 +65,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return words;
     }
 
+    function updateTimerDisplay() {
+        timerText.textContent = timeLeft;
+        const angle = (timeLeft / data.duration) * 360;
+        timerEl.style.background = `conic-gradient(#4caf50 ${angle}deg, rgba(0,0,0,0.1) 0deg)`;
+    }
+
     function startTimer() {
         stopTimer();
         timeLeft = data.duration;
-        timerEl.textContent = timeLeft;
+        updateTimerDisplay();
         timer = setInterval(() => {
             timeLeft--;
-            timerEl.textContent = timeLeft;
+            updateTimerDisplay();
             if (timeLeft <= 0) {
                 stopTimer();
                 revealBtn.disabled = false;
@@ -83,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             clearInterval(timer);
             timer = null;
         }
+        updateTimerDisplay();
     }
 
     function updateScoreboard() {
@@ -139,16 +147,16 @@ document.addEventListener('DOMContentLoaded', () => {
         revealBtn.disabled = true;
         revealBtn.hidden = false;
         nextBtn.hidden = true;
-        timerEl.textContent = '';
+        timerText.textContent = '';
         currentSentence = getRandomSentence();
         const words = shuffleWords(currentSentence);
-        scrambledEl.textContent = words.join(' ');
+        scrambledEl.innerHTML = words.map(w => `<span class="word">${w}</span>`).join(' ');
         startTimer();
     }
 
     function reveal() {
         stopTimer();
-        scrambledEl.innerHTML = `${scrambledEl.textContent}<br><em>${currentSentence}</em>`;
+        scrambledEl.innerHTML = `${scrambledEl.innerHTML}<br><em>${currentSentence}</em>`;
         revealBtn.hidden = true;
         nextBtn.hidden = false;
     }
@@ -161,7 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
             html += `${idx + 1}. ${entry[0]} – ${entry[1]}<br>`;
         });
         scrambledEl.innerHTML = html;
-        timerEl.textContent = '';
+        timerText.textContent = '';
+        timerEl.style.background = 'conic-gradient(#4caf50 0deg, rgba(0,0,0,0.1) 0deg)';
         revealBtn.hidden = true;
         nextBtn.hidden = true;
     }
