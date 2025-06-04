@@ -6,6 +6,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-right: 190px;
     background: linear-gradient(135deg, #d8f3dc, #b7e4c7, #95d5b2);
     background-size: 400% 400%;
     animation: bgMove 15s ease infinite;
@@ -27,16 +28,16 @@ body {
 
 #scores {
     position: fixed;
-    left: 0;
-    right: 0;
+    top: 0;
     bottom: 0;
-    padding: 0.3rem 0.5rem;
-    font-size: 1rem;
+    right: 0;
+    width: 180px;
+    padding: 0.5rem;
+    font-size: 0.8rem;
     background: rgba(255, 255, 255, 0.3);
     border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
     backdrop-filter: blur(6px);
-    max-height: 3cm;
     overflow-y: auto;
     color: #042;
 }
@@ -45,10 +46,6 @@ body {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.2rem 0.6rem;
 }
 
 #scores h2 {
@@ -60,17 +57,22 @@ body {
 #scoreList li {
     display: flex;
     align-items: center;
-    margin: 0;
+    justify-content: space-between;
+    margin: 0.2rem 0;
 }
 
-.score-btn {
-    margin-left: 0.2rem;
-    padding: 0.2rem 0.5rem;
-    font-size: 1rem;
+.score-name {
+    cursor: pointer;
 }
 
-.score-label {
-    margin-right: 0.2rem;
+.score-value {
+    cursor: pointer;
+    background: rgba(255,255,255,0.8);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    min-width: 1.4rem;
+    text-align: center;
+    font-weight: 700;
 }
 
 .word {
@@ -133,4 +135,13 @@ dialog {
     border: none;
     border-radius: 10px;
     backdrop-filter: blur(10px);
+}
+
+#settingsBtn {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    font-size: 0.8rem;
+    padding: 0.2rem 0.4rem;
+    margin: 0;
 }
