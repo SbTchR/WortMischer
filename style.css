@@ -1,0 +1,25 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+#wordList {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#wordList li {
+    padding: 8px 12px;
+    border: 1px solid #333;
+    background-color: #f0f0f0;
+    cursor: grab;
+    user-select: none;
+}
+
+#result {
+    font-weight: bold;
+    margin-top: 10px;
+}
