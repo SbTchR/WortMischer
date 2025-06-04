@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const namesInput = document.getElementById('namesInput');
     const durationInput = document.getElementById('durationInput');
     const saveSettingsBtn = document.getElementById('saveSettings');
+    const resetScoresBtn = document.getElementById('resetScores');
     const scoreList = document.getElementById('scoreList');
 
     let data = loadData();
@@ -101,31 +102,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const li = document.createElement('li');
             li.dataset.name = name;
 
-            const label = document.createElement('span');
-            label.className = 'score-label';
-            label.textContent = `${name} – ${data.scores[name]}`;
-
-            const addBtn = document.createElement('button');
-            addBtn.className = 'score-btn';
-            addBtn.textContent = '+';
-            addBtn.addEventListener('click', () => {
-                data.scores[name]++;
-                saveData();
-                updateScoreboard();
-            });
-
-            const subBtn = document.createElement('button');
-            subBtn.className = 'score-btn';
-            subBtn.textContent = '−';
-            subBtn.addEventListener('click', () => {
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'score-name';
+            nameSpan.textContent = name;
+            nameSpan.addEventListener('click', () => {
                 data.scores[name]--;
                 saveData();
                 updateScoreboard();
             });
 
-            li.appendChild(label);
-            li.appendChild(addBtn);
-            li.appendChild(subBtn);
+            const valueSpan = document.createElement('span');
+            valueSpan.className = 'score-value';
+            valueSpan.textContent = data.scores[name];
+            valueSpan.addEventListener('click', () => {
+                data.scores[name]++;
+                saveData();
+                updateScoreboard();
+            });
+
+            li.appendChild(nameSpan);
+            li.appendChild(valueSpan);
             scoreList.appendChild(li);
         });
     }
@@ -200,5 +196,13 @@ document.addEventListener('DOMContentLoaded', () => {
         updateScoreboard();
         played = [];
         nextRound();
+    });
+
+    resetScoresBtn.addEventListener('click', () => {
+        Object.keys(data.scores).forEach(name => {
+            data.scores[name] = 0;
+        });
+        saveData();
+        updateScoreboard();
     });
 });
