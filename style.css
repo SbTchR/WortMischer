@@ -30,13 +30,13 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 0.5rem 1rem 1rem;
-    font-size: 1.3rem;
+    padding: 0.3rem 0.5rem;
+    font-size: 1rem;
     background: rgba(255, 255, 255, 0.3);
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     backdrop-filter: blur(6px);
-    max-height: 40vh;
+    max-height: 3cm;
     overflow-y: auto;
     color: #042;
 }
@@ -45,6 +45,10 @@ body {
     list-style: none;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.2rem 0.6rem;
 }
 
 #scores h2 {
@@ -52,27 +56,21 @@ body {
     text-align: center;
 }
 
-.hint {
-    font-size: 0.8rem;
-    margin: 0 0 0.5rem 0;
-    text-align: center;
-}
 
 #scoreList li {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin: 0.5rem 0;
+    margin: 0;
 }
 
 .score-btn {
-    margin-left: 0.3rem;
+    margin-left: 0.2rem;
     padding: 0.2rem 0.5rem;
     font-size: 1rem;
 }
 
 .score-label {
-    flex-grow: 1;
+    margin-right: 0.2rem;
 }
 
 .word {

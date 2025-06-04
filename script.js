@@ -95,7 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateScoreboard() {
         scoreList.innerHTML = '';
-        data.names.forEach(name => {
+        const sortedNames = [...data.names].sort((a, b) => data.scores[b] - data.scores[a]);
+        sortedNames.forEach(name => {
             if (data.scores[name] == null) data.scores[name] = 0;
             const li = document.createElement('li');
             li.dataset.name = name;
@@ -109,8 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
             addBtn.textContent = '+';
             addBtn.addEventListener('click', () => {
                 data.scores[name]++;
-                label.textContent = `${name} – ${data.scores[name]}`;
                 saveData();
+                updateScoreboard();
             });
 
             const subBtn = document.createElement('button');
@@ -118,8 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
             subBtn.textContent = '−';
             subBtn.addEventListener('click', () => {
                 data.scores[name]--;
-                label.textContent = `${name} – ${data.scores[name]}`;
                 saveData();
+                updateScoreboard();
             });
 
             li.appendChild(label);
