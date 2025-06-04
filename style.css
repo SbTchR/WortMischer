@@ -1,23 +1,41 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Segoe UI", Roboto, sans-serif;
     margin: 0;
     padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #fff;
+}
+
+#game {
+    margin-right: 18rem;
+    text-align: center;
+    width: min(80vw, 700px);
 }
 
 .big {
     font-size: 6vw;
     text-align: center;
     margin: 1rem 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
 }
 
 #scores {
     position: fixed;
-    right: 0;
-    top: 0;
-    max-width: 25%;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16rem;
     padding: 1rem;
-    list-style: none;
     font-size: 1.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 #scores ul {
@@ -26,13 +44,63 @@ body {
     padding: 0;
 }
 
+#scores h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.hint {
+    font-size: 0.8rem;
+    margin: 0 0 0.5rem 0;
+    text-align: center;
+}
+
+#scoreList li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0.5rem 0;
+}
+
+.score-btn {
+    margin-left: 0.3rem;
+    padding: 0.2rem 0.5rem;
+    font-size: 1rem;
+}
+
+.score-label {
+    flex-grow: 1;
+}
+
 button {
     font-size: 1.2rem;
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1.2rem;
     margin: 0.5rem;
+    color: #fff;
+    background: linear-gradient(145deg, rgba(255,255,255,0.25), rgba(255,255,255,0.1));
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(6px);
+    transition: transform 0.1s, box-shadow 0.1s, background 0.3s;
+}
+
+button:hover {
+    background: linear-gradient(145deg, rgba(255,255,255,0.35), rgba(255,255,255,0.2));
+}
+
+button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 dialog {
     padding: 1rem;
     font-size: 1.2rem;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 10px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }

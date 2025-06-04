@@ -6,12 +6,16 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="scrambled" class="big"></div>
-    <div id="timer" class="big"></div>
-    <button id="revealBtn" aria-label="Révéler">Révéler</button>
-    <button id="nextBtn" aria-label="Manche suivante" hidden>Manche suivante</button>
+    <main id="game">
+        <div id="scrambled" class="big"></div>
+        <div id="timer" class="big"></div>
+        <button id="revealBtn" aria-label="Révéler">Révéler</button>
+        <button id="nextBtn" aria-label="Manche suivante" hidden>Manche suivante</button>
+    </main>
 
     <aside id="scores">
+        <h2>Scores</h2>
+        <p class="hint">Utilisez "+" ou "-" pour corriger les points.</p>
         <ul id="scoreList"></ul>
     </aside>
 
