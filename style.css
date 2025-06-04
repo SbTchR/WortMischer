@@ -154,8 +154,7 @@ dialog {
     text-align: center;
     font-size: 2.5rem;
     padding: 0.2rem 0;
-    color: #042;
+    color: rgb(0, 20, 68);
     pointer-events: none;
     z-index: 1;
-    background: rgba(255, 255, 255, 0.6);
 }
