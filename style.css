@@ -145,3 +145,15 @@ dialog {
     padding: 0.2rem 0.4rem;
     margin: 0;
 }
+
+#translation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.8rem;
+    padding: 0.2rem 0;
+    color: #042;
+    pointer-events: none;
+}
