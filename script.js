@@ -91,13 +91,32 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.scores[name] == null) data.scores[name] = 0;
             const li = document.createElement('li');
             li.dataset.name = name;
-            li.textContent = `${name} – ${data.scores[name]}`;
-            li.addEventListener('click', e => {
-                if (e.shiftKey) data.scores[name]--;
-                else data.scores[name]++;
-                li.textContent = `${name} – ${data.scores[name]}`;
+
+            const label = document.createElement('span');
+            label.className = 'score-label';
+            label.textContent = `${name} – ${data.scores[name]}`;
+
+            const addBtn = document.createElement('button');
+            addBtn.className = 'score-btn';
+            addBtn.textContent = '+';
+            addBtn.addEventListener('click', () => {
+                data.scores[name]++;
+                label.textContent = `${name} – ${data.scores[name]}`;
                 saveData();
             });
+
+            const subBtn = document.createElement('button');
+            subBtn.className = 'score-btn';
+            subBtn.textContent = '−';
+            subBtn.addEventListener('click', () => {
+                data.scores[name]--;
+                label.textContent = `${name} – ${data.scores[name]}`;
+                saveData();
+            });
+
+            li.appendChild(label);
+            li.appendChild(addBtn);
+            li.appendChild(subBtn);
             scoreList.appendChild(li);
         });
     }
