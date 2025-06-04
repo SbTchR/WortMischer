@@ -1,77 +1,175 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const sentence = 'Ich lerne gerne neue Sprachen';
-    const correctOrder = sentence.split(' ');
-    const wordList = document.getElementById('wordList');
-    const checkBtn = document.getElementById('checkBtn');
-    const result = document.getElementById('result');
+    const scrambledEl = document.getElementById('scrambled');
+    const timerEl = document.getElementById('timer');
+    const revealBtn = document.getElementById('revealBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsDlg = document.getElementById('settings');
+    const phrasesInput = document.getElementById('phrasesInput');
+    const namesInput = document.getElementById('namesInput');
+    const durationInput = document.getElementById('durationInput');
+    const saveSettingsBtn = document.getElementById('saveSettings');
+    const scoreList = document.getElementById('scoreList');
 
-    const shuffled = shuffle([...correctOrder]);
-    renderWords(shuffled);
+    let data = loadData();
+    let played = [];
+    let currentSentence = '';
+    let timer = null;
+    let timeLeft = data.duration;
 
-    checkBtn.addEventListener('click', () => {
-        const current = Array.from(wordList.children).map(li => li.textContent);
-        if (arraysEqual(current, correctOrder)) {
-            result.textContent = 'Richtig!';
-            result.style.color = 'green';
+    init();
+
+    function init() {
+        updateScoreboard();
+        nextRound();
+    }
+
+    function loadData() {
+        const defaults = {
+            phrases: ['Bonjour tout le monde.'],
+            names: [],
+            duration: 30,
+            scores: {}
+        };
+        let stored = localStorage.getItem('wm_data');
+        if (stored) {
+            try { stored = JSON.parse(stored); } catch (e) { stored = {}; }
         } else {
-            result.textContent = 'Leider falsch.';
-            result.style.color = 'red';
+            stored = {};
         }
+        const d = { ...defaults, ...stored };
+        if (!Array.isArray(d.phrases)) d.phrases = defaults.phrases;
+        if (!Array.isArray(d.names)) d.names = defaults.names;
+        if (!d.duration) d.duration = defaults.duration;
+        if (!d.scores) d.scores = {};
+        d.names.forEach(n => {
+            if (d.scores[n] == null) d.scores[n] = 0;
+        });
+        return d;
+    }
+
+    function saveData() {
+        localStorage.setItem('wm_data', JSON.stringify(data));
+    }
+
+    function shuffleWords(sentence) {
+        const m = sentence.trim().match(/^(.*?)([.!?])?$/);
+        let words = m[1].split(/\s+/);
+        const punct = m[2] || '';
+        for (let i = words.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [words[i], words[j]] = [words[j], words[i]];
+        }
+        words[words.length - 1] += punct;
+        return words;
+    }
+
+    function startTimer() {
+        stopTimer();
+        timeLeft = data.duration;
+        timerEl.textContent = timeLeft;
+        timer = setInterval(() => {
+            timeLeft--;
+            timerEl.textContent = timeLeft;
+            if (timeLeft <= 0) {
+                stopTimer();
+                revealBtn.disabled = false;
+            }
+        }, 1000);
+    }
+
+    function stopTimer() {
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+
+    function updateScoreboard() {
+        scoreList.innerHTML = '';
+        data.names.forEach(name => {
+            if (data.scores[name] == null) data.scores[name] = 0;
+            const li = document.createElement('li');
+            li.dataset.name = name;
+            li.textContent = `${name} – ${data.scores[name]}`;
+            li.addEventListener('click', e => {
+                if (e.shiftKey) data.scores[name]--;
+                else data.scores[name]++;
+                li.textContent = `${name} – ${data.scores[name]}`;
+                saveData();
+            });
+            scoreList.appendChild(li);
+        });
+    }
+
+    function getRandomSentence() {
+        if (played.length === data.phrases.length) return null;
+        let idx;
+        do {
+            idx = Math.floor(Math.random() * data.phrases.length);
+        } while (played.includes(idx));
+        played.push(idx);
+        return data.phrases[idx];
+    }
+
+    function nextRound() {
+        if (played.length === data.phrases.length) {
+            endGame();
+            return;
+        }
+        revealBtn.disabled = true;
+        revealBtn.hidden = false;
+        nextBtn.hidden = true;
+        timerEl.textContent = '';
+        currentSentence = getRandomSentence();
+        const words = shuffleWords(currentSentence);
+        scrambledEl.textContent = words.join(' ');
+        startTimer();
+    }
+
+    function reveal() {
+        stopTimer();
+        scrambledEl.innerHTML = `${scrambledEl.textContent}<br><em>${currentSentence}</em>`;
+        revealBtn.hidden = true;
+        nextBtn.hidden = false;
+    }
+
+    function endGame() {
+        stopTimer();
+        const ranking = Object.entries(data.scores).sort((a, b) => b[1] - a[1]);
+        let html = 'Classement final:<br>';
+        ranking.forEach((entry, idx) => {
+            html += `${idx + 1}. ${entry[0]} – ${entry[1]}<br>`;
+        });
+        scrambledEl.innerHTML = html;
+        timerEl.textContent = '';
+        revealBtn.hidden = true;
+        nextBtn.hidden = true;
+    }
+
+    revealBtn.addEventListener('click', reveal);
+    nextBtn.addEventListener('click', nextRound);
+
+    settingsBtn.addEventListener('click', () => {
+        phrasesInput.value = data.phrases.join('\n');
+        namesInput.value = data.names.join(', ');
+        durationInput.value = data.duration;
+        settingsDlg.showModal();
     });
 
-    function renderWords(words) {
-        wordList.innerHTML = '';
-        words.forEach((word, index) => {
-            const li = document.createElement('li');
-            li.textContent = word;
-            li.draggable = true;
-            li.dataset.index = index;
-            addDragHandlers(li);
-            wordList.appendChild(li);
+    saveSettingsBtn.addEventListener('click', () => {
+        data.phrases = phrasesInput.value.split(/\n+/).map(l => l.trim()).filter(Boolean);
+        data.names = namesInput.value.split(',').map(n => n.trim()).filter(Boolean);
+        data.duration = parseInt(durationInput.value, 10) || 30;
+        const newScores = {};
+        data.names.forEach(n => {
+            newScores[n] = data.scores[n] || 0;
         });
-    }
-
-    function addDragHandlers(element) {
-        element.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', e.target.dataset.index);
-        });
-
-        element.addEventListener('dragover', (e) => {
-            e.preventDefault();
-        });
-
-        element.addEventListener('drop', (e) => {
-            e.preventDefault();
-            const fromIndex = e.dataTransfer.getData('text/plain');
-            const toIndex = e.target.dataset.index;
-            const fromEl = wordList.querySelector(`[data-index="${fromIndex}"]`);
-            const toEl = wordList.querySelector(`[data-index="${toIndex}"]`);
-            if (fromEl && toEl && fromEl !== toEl) {
-                if (fromIndex < toIndex) {
-                    wordList.insertBefore(fromEl, toEl.nextSibling);
-                } else {
-                    wordList.insertBefore(fromEl, toEl);
-                }
-                updateIndexes();
-            }
-        });
-    }
-
-    function updateIndexes() {
-        Array.from(wordList.children).forEach((li, idx) => {
-            li.dataset.index = idx;
-        });
-    }
-
-    function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
-
-    function arraysEqual(a, b) {
-        return a.length === b.length && a.every((v, i) => v === b[i]);
-    }
+        data.scores = newScores;
+        saveData();
+        settingsDlg.close();
+        updateScoreboard();
+        played = [];
+        nextRound();
+    });
 });
