@@ -2,11 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrambledEl = document.getElementById('scrambled');
     const timerEl = document.getElementById('timer');
     const timerText = document.getElementById('timerText');
+    const translationEl = document.getElementById('translation');
     const revealBtn = document.getElementById('revealBtn');
     const nextBtn = document.getElementById('nextBtn');
     const settingsBtn = document.getElementById('settingsBtn');
     const settingsDlg = document.getElementById('settings');
     const phrasesInput = document.getElementById('phrasesInput');
+    const translationsInput = document.getElementById('translationsInput');
     const namesInput = document.getElementById('namesInput');
     const durationInput = document.getElementById('durationInput');
     const saveSettingsBtn = document.getElementById('saveSettings');
@@ -16,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let data = loadData();
     let played = [];
     let currentSentence = '';
+    let currentIndex = -1;
     let timer = null;
     let timeLeft = data.duration;
 
@@ -23,12 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function init() {
         updateScoreboard();
+        translationEl.style.visibility = 'hidden';
         nextRound();
     }
 
     function loadData() {
         const defaults = {
             phrases: ['Bonjour tout le monde.'],
+            translations: [],
             names: [],
             duration: 30,
             scores: {}
@@ -41,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const d = { ...defaults, ...stored };
         if (!Array.isArray(d.phrases)) d.phrases = defaults.phrases;
+        if (!Array.isArray(d.translations)) d.translations = defaults.translations;
         if (!Array.isArray(d.names)) d.names = defaults.names;
         if (!d.duration) d.duration = defaults.duration;
         if (!d.scores) d.scores = {};
@@ -133,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
             idx = Math.floor(Math.random() * data.phrases.length);
         } while (played.includes(idx));
         played.push(idx);
+        currentIndex = idx;
         return data.phrases[idx];
     }
 
@@ -146,6 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
         nextBtn.hidden = true;
         timerText.textContent = '';
         currentSentence = getRandomSentence();
+        const translation = data.translations[currentIndex] || '';
+        translationEl.textContent = translation;
+        translationEl.style.visibility = translation ? 'visible' : 'hidden';
         const words = shuffleWords(currentSentence);
         scrambledEl.innerHTML = words.map(w => `<span class="word">${w}</span>`).join(' ');
         startTimer();
@@ -170,6 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
         timerEl.style.background = 'conic-gradient(#4caf50 0deg, rgba(0,0,0,0.1) 0deg)';
         revealBtn.hidden = true;
         nextBtn.hidden = true;
+        translationEl.textContent = '';
+        translationEl.style.visibility = 'hidden';
     }
 
     revealBtn.addEventListener('click', reveal);
@@ -177,6 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     settingsBtn.addEventListener('click', () => {
         phrasesInput.value = data.phrases.join('\n');
+        translationsInput.value = data.translations.join('\n');
         namesInput.value = data.names.join(', ');
         durationInput.value = data.duration;
         settingsDlg.showModal();
@@ -184,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     saveSettingsBtn.addEventListener('click', () => {
         data.phrases = phrasesInput.value.split(/\n+/).map(l => l.trim()).filter(Boolean);
+        data.translations = translationsInput.value.split(/\n+/).map(l => l.trim());
         data.names = namesInput.value.split(',').map(n => n.trim()).filter(Boolean);
         data.duration = parseInt(durationInput.value, 10) || 30;
         const newScores = {};
