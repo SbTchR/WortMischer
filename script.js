@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const scrambledEl = document.getElementById('scrambled');
-    const timerEl = document.getElementById('timer');
-    const timerText = document.getElementById('timerText');
+    const timebar = document.getElementById('timebar');
+    const timebarFill = document.getElementById('timebarFill');
     const translationEl = document.getElementById('translation');
     const revealBtn = document.getElementById('revealBtn');
     const nextBtn = document.getElementById('nextBtn');
@@ -60,6 +60,24 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('wm_data', JSON.stringify(data));
     }
 
+    function hashName(name){
+        let h = 2166136261 >>> 0; // FNV-1a seed
+        for (let i=0;i<name.length;i++){
+            h ^= name.charCodeAt(i);
+            h = Math.imul(h, 16777619) >>> 0;
+        }
+        return h >>> 0;
+    }
+    function pastelForName(name){
+        // Palette répartie en 20 teintes bien distinctes (toutes différentes)
+        const steps = 20; // 360/20 = 18°
+        const idx = hashName(name) % steps;
+        const h = idx * 18; // 0..342
+        const bg = `hsl(${h}, 70%, 92%)`;
+        const border = `hsl(${h}, 55%, 78%)`;
+        return {bg, border};
+    }
+
     function shuffleWords(sentence) {
         const m = sentence.trim().match(/^(.*?)([.!?])?$/);
         let words = m[1].split(/\s+/);
@@ -72,10 +90,24 @@ document.addEventListener('DOMContentLoaded', () => {
         return words;
     }
 
+    function tokensForSentence(sentence) {
+        const m = sentence.trim().match(/^(.*?)([.!?])?$/);
+        let words = (m && m[1] ? m[1] : sentence.trim()).split(/\s+/).filter(Boolean);
+        const punct = (m && m[2]) ? m[2] : '';
+        if (punct && words.length) {
+            words[words.length - 1] = words[words.length - 1] + punct;
+        }
+        return words;
+    }
+
     function updateTimerDisplay() {
-        timerText.textContent = timeLeft;
-        const angle = (timeLeft / data.duration) * 360;
-        timerEl.style.background = `conic-gradient(#4caf50 ${angle}deg, rgba(0,0,0,0.1) 0deg)`;
+        const pct = Math.max(0, Math.min(1, timeLeft / data.duration));
+        if (timebarFill) {
+            timebarFill.style.width = `${(pct * 100).toFixed(1)}%`;
+        }
+        if (timebar) {
+            timebar.setAttribute('aria-valuenow', String(Math.round(pct * 100)));
+        }
     }
 
     function startTimer() {
@@ -107,30 +139,77 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.scores[name] == null) data.scores[name] = 0;
             const li = document.createElement('li');
             li.dataset.name = name;
+            const colors = pastelForName(name);
+            li.style.background = colors.bg;
+            li.style.borderColor = colors.border;
 
             const nameSpan = document.createElement('span');
             nameSpan.className = 'score-name';
             nameSpan.textContent = name;
-            nameSpan.addEventListener('click', () => {
+
+            const valueSpan = document.createElement('span');
+            valueSpan.className = 'score-value';
+            valueSpan.textContent = data.scores[name];
+
+            const right = document.createElement('div');
+            right.className = 'score-right';
+
+            const minusBtn = document.createElement('button');
+            minusBtn.type = 'button';
+            minusBtn.className = 'icon-btn minus';
+            minusBtn.textContent = '−';
+            minusBtn.setAttribute('aria-label', `Retirer un point à ${name}`);
+            minusBtn.addEventListener('click', () => {
                 data.scores[name]--;
                 saveData();
                 updateScoreboard();
             });
 
-            const valueSpan = document.createElement('span');
-            valueSpan.className = 'score-value';
-            valueSpan.textContent = data.scores[name];
-            valueSpan.addEventListener('click', () => {
+            const plusBtn = document.createElement('button');
+            plusBtn.type = 'button';
+            plusBtn.className = 'icon-btn plus';
+            plusBtn.textContent = '+';
+            plusBtn.setAttribute('aria-label', `Ajouter un point à ${name}`);
+            plusBtn.addEventListener('click', () => {
                 data.scores[name]++;
                 saveData();
                 updateScoreboard();
             });
 
+            right.appendChild(minusBtn);
+            right.appendChild(valueSpan);
+            right.appendChild(plusBtn);
+
             li.appendChild(nameSpan);
-            li.appendChild(valueSpan);
+            li.appendChild(right);
             scoreList.appendChild(li);
         });
+        // Ajuste dynamiquement la taille du nom pour tenir sur une ligne
+        requestAnimationFrame(fitTeamNames);
     }
+
+    function fitTeamNames(){
+        const MIN_SIZE = 10; // px, permet d'éviter la troncature
+        document.querySelectorAll('#scoreList .score-name').forEach(span =>{
+            // reset to CSS value
+            span.style.fontSize = '';
+            // ensure measuring against available width
+            const parent = span.parentElement;
+            if(!parent) return;
+            // Loop down until it fits on one line without overflow
+            let size = parseFloat(getComputedStyle(span).fontSize);
+            // protect against NaN
+            if(!isFinite(size) || size<=0) size = 18;
+            // shrink if needed
+            let guard = 80;
+            while(guard-- && span.scrollWidth > span.clientWidth && size > MIN_SIZE){
+                size -= 1;
+                span.style.fontSize = size + 'px';
+            }
+        });
+    }
+
+    window.addEventListener('resize', () => requestAnimationFrame(fitTeamNames));
 
     function getRandomSentence() {
         if (played.length === data.phrases.length) return null;
@@ -151,7 +230,8 @@ document.addEventListener('DOMContentLoaded', () => {
         revealBtn.disabled = true;
         revealBtn.hidden = false;
         nextBtn.hidden = true;
-        timerText.textContent = '';
+        if (timebarFill) timebarFill.style.width = '100%';
+        if (timebar) timebar.setAttribute('aria-valuenow','100');
         currentSentence = getRandomSentence();
         const translation = data.translations[currentIndex] || '';
         translationEl.textContent = translation;
@@ -163,7 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function reveal() {
         stopTimer();
-        scrambledEl.innerHTML = `${scrambledEl.innerHTML}<br><em>${currentSentence}</em>`;
+        const ordered = tokensForSentence(currentSentence);
+        scrambledEl.innerHTML = ordered.map(w => `<span class="word">${w}</span>`).join(' ');
         revealBtn.hidden = true;
         nextBtn.hidden = false;
     }
@@ -176,8 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
             html += `${idx + 1}. ${entry[0]} – ${entry[1]}<br>`;
         });
         scrambledEl.innerHTML = html;
-        timerText.textContent = '';
-        timerEl.style.background = 'conic-gradient(#4caf50 0deg, rgba(0,0,0,0.1) 0deg)';
+        if (timebarFill) timebarFill.style.width = '0%';
         revealBtn.hidden = true;
         nextBtn.hidden = true;
         translationEl.textContent = '';

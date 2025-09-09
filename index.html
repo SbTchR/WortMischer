@@ -8,28 +8,38 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="translation" class="translation"></div>
-    <div id="scrambled" class="big"></div>
-    <div id="timer" class="big"><span id="timerText"></span></div>
-    <button id="revealBtn" aria-label="Révéler">Révéler</button>
-    <button id="nextBtn" aria-label="Manche suivante" hidden>Manche suivante</button>
+    <!-- Bandeau supprimé selon la demande -->
 
-    <aside id="scores">
-        <h2>Scores</h2>
-        <ul id="scoreList"></ul>
-        <button id="resetScores" aria-label="Réinitialiser">Réinitialiser</button>
+    <main id="stage" aria-label="Zone de jeu">
+        <div id="translation" class="translation" aria-live="polite"></div>
+        <div id="scrambled" class="scrambled big"></div>
+        <div id="timebar" role="progressbar" aria-label="Temps restant" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+            <div id="timebarFill"></div>
+        </div>
+    </main>
+
+    <aside id="scores" aria-label="Tableau des scores">
+        <div class="scores-body">
+            <h2>Scores</h2>
+            <ul id="scoreList"></ul>
+            <button id="resetScores" aria-label="Réinitialiser">Réinitialiser</button>
+        </div>
+        <div class="actions">
+            <button id="revealBtn" aria-label="Révéler">Révéler</button>
+            <button id="nextBtn" aria-label="Manche suivante" hidden>Manche suivante</button>
+            <button id="settingsBtn" aria-label="Paramètres">Paramètres</button>
+        </div>
     </aside>
 
-    <button id="settingsBtn" aria-label="Paramètres">Paramètres</button>
     <dialog id="settings">
         <label for="phrasesInput">Phrases :</label><br>
-        <textarea id="phrasesInput" rows="5" cols="30"></textarea><br>
+        <textarea id="phrasesInput" rows="5" cols="30" placeholder="Entre ici les phrases dans la langue étrangères. Celles-ci seront mélangées et les élèves devront les récrire dans l'ordre"></textarea><br>
         <label for="translationsInput">Traductions (optionnel) :</label><br>
-        <textarea id="translationsInput" rows="5" cols="30"></textarea><br>
-        <label for="namesInput">Prénoms :</label><br>
-        <input id="namesInput" type="text"><br>
+        <textarea id="translationsInput" rows="5" cols="30" placeholder="Entre ici les traductions des phrases dans le même ordre. Ce n'est pas indispensable, mais cela fournit une aide aux élèves et assure qu'ils comprennent les phrases."></textarea><br>
+        <label for="namesInput">Prénoms/équipes :</label><br>
+        <input id="namesInput" type="text" placeholder="Inscris les prénoms des élèves ou les noms des équipes, séparés par des virgules"><br>
         <label for="durationInput">Durée (s) :</label><br>
-        <input id="durationInput" type="number" min="1"><br>
+        <input id="durationInput" type="number" min="1" placeholder="Nombre de secondes à disposition pour récrire les phrases dans le bon ordre."><br>
         <button id="saveSettings">Enregistrer</button>
     </dialog>
 
